@@ -1,4 +1,4 @@
-package ru.practicum.diplom.user;
+package ru.practicum.diplom.admin.user;
 
 import lombok.Data;
 
