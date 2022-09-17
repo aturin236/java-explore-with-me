@@ -4,6 +4,9 @@ import ru.practicum.diplom.admin.category.dto.CategoryMapper;
 import ru.practicum.diplom.admin.user.dto.UserMapper;
 import ru.practicum.diplom.priv.event.Event;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EventMapper {
     public static Event newEventDtoToEvent(NewEventDto newEventDto) {
         Event event = new Event();
@@ -39,6 +42,38 @@ public class EventMapper {
                 .initiator(UserMapper.toUserShortDto(event.getInitiator()))
                 .state(event.getState())
                 .location(new Location(event.getLongitude(), event.getLatitude()))
+                .confirmedRequests(0)
+                .views(0)
                 .build();
+    }
+
+    public static List<EventFullDto> eventToEventFullDto(Iterable<Event> events) {
+        List<EventFullDto> dtos = new ArrayList<>();
+        for (Event event : events) {
+            dtos.add(eventToEventFullDto(event));
+        }
+        return dtos;
+    }
+
+    public static EventShortDto eventToEventShortDto(Event event) {
+        return EventShortDto.builder()
+                .id(event.getId())
+                .annotation(event.getAnnotation())
+                .title(event.getTitle())
+                .eventDate(event.getEventDate())
+                .category(CategoryMapper.toCategoryDto(event.getCategory()))
+                .paid(event.isPaid())
+                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
+                .confirmedRequests(0)
+                .views(0)
+                .build();
+    }
+
+    public static List<EventShortDto> eventToEventShortDto(Iterable<Event> events) {
+        List<EventShortDto> dtos = new ArrayList<>();
+        for (Event event : events) {
+            dtos.add(eventToEventShortDto(event));
+        }
+        return dtos;
     }
 }

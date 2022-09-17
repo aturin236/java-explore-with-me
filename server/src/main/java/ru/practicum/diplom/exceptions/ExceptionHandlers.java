@@ -3,6 +3,7 @@ package ru.practicum.diplom.exceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -14,7 +15,8 @@ import java.util.List;
 public class ExceptionHandlers {
     @ExceptionHandler({UserNotFoundException.class,
             CategoryNotFoundException.class,
-            EventNotFoundException.class})
+            EventNotFoundException.class,
+            CompilationNotFoundException.class})
     public ResponseEntity<ApiError> handle404(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -40,13 +42,17 @@ public class ExceptionHandlers {
 
     @ExceptionHandler({MethodArgumentNotValidException.class,
             ConstraintViolationException.class,
-            EventBadRequestException.class})
+            MissingServletRequestParameterException.class,
+            EventBadRequestException.class,
+            CompilationBadRequestException.class})
     public ResponseEntity<ApiError> handle400(Exception e) {
         String error = "";
         if (e instanceof MethodArgumentNotValidException) {
             error = "error in object " + ((MethodArgumentNotValidException) e).getObjectName();
         } else if (e instanceof ConstraintViolationException) {
             error = ((ConstraintViolationException) e).getConstraintViolations().toString();
+        } else if (e instanceof MissingServletRequestParameterException) {
+            error = ((MissingServletRequestParameterException) e).getParameterName();
         }
         List<String> errors = List.of(error);
         return ResponseEntity

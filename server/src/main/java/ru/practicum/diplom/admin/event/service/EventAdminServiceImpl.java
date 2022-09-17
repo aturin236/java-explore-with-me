@@ -31,7 +31,9 @@ public class EventAdminServiceImpl implements EventAdminService {
             LocalDateTime rangeEnd,
             int from,
             int size) {
-        return null;
+        return EventMapper.eventToEventFullDto(
+                eventRepository.findEventsByParam(users, states, categories, rangeStart, rangeEnd, from, size)
+        );
     }
 
     @Override
