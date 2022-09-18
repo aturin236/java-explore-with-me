@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public Iterable<UserDto> getUsers(List<Long> ids, int from, int size) {
+    public List<UserDto> getUsers(List<Long> ids, int from, int size) {
         log.debug("Запрос getUsers по userId - {}, from - {}, page - {}", ids, from, size);
 
         Pageable pageRequest = PageRequest.of(from, size);

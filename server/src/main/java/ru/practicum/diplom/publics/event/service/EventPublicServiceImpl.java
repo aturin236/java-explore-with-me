@@ -8,6 +8,7 @@ import ru.practicum.diplom.priv.event.Event;
 import ru.practicum.diplom.priv.event.EventState;
 import ru.practicum.diplom.priv.event.dto.EventMapper;
 import ru.practicum.diplom.priv.event.dto.EventShortDto;
+import ru.practicum.diplom.priv.event.dto.service.EventDtoService;
 import ru.practicum.diplom.priv.event.repository.EventRepository;
 import ru.practicum.diplom.publics.event.EventKindSort;
 
@@ -19,6 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventPublicServiceImpl implements EventPublicService {
     private final EventRepository eventRepository;
+
+    private final EventDtoService eventDtoService;
 
     @Override
     public List<EventShortDto> getEvents(
@@ -41,7 +44,9 @@ public class EventPublicServiceImpl implements EventPublicService {
                 from,
                 size
         );
-        return EventMapper.eventToEventShortDto(events);//TODO добавить сортировку и поля количества реквестов и view
+        return eventDtoService.addConfirmedRequests(
+                EventMapper.eventToEventShortDto(events)
+        );//TODO добавить сортировку и поля количества реквестов и view
     }
 
     @Override
@@ -53,6 +58,8 @@ public class EventPublicServiceImpl implements EventPublicService {
                     String.format("Попытка получения не опубликованного события по id %s", id)
             );
         }
-        return EventMapper.eventToEventShortDto(event);
+        return eventDtoService.addConfirmedRequests(
+                EventMapper.eventToEventShortDto(event)
+        );
     }
 }

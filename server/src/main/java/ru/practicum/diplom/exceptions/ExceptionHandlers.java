@@ -16,7 +16,8 @@ public class ExceptionHandlers {
     @ExceptionHandler({UserNotFoundException.class,
             CategoryNotFoundException.class,
             EventNotFoundException.class,
-            CompilationNotFoundException.class})
+            CompilationNotFoundException.class,
+            RequestNotFoundException.class})
     public ResponseEntity<ApiError> handle404(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -28,7 +29,8 @@ public class ExceptionHandlers {
                         .build());
     }
 
-    @ExceptionHandler({EventForbiddenException.class})
+    @ExceptionHandler({EventForbiddenException.class,
+            RequestForbiddenException.class})
     public ResponseEntity<ApiError> handle403(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)

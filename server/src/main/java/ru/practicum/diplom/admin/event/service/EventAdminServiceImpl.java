@@ -10,6 +10,7 @@ import ru.practicum.diplom.priv.event.EventState;
 import ru.practicum.diplom.priv.event.dto.EventFullDto;
 import ru.practicum.diplom.priv.event.dto.EventMapper;
 import ru.practicum.diplom.priv.event.dto.NewEventDto;
+import ru.practicum.diplom.priv.event.dto.service.EventDtoService;
 import ru.practicum.diplom.priv.event.repository.EventRepository;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ import java.util.List;
 public class EventAdminServiceImpl implements EventAdminService {
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
+    private final EventDtoService eventDtoService;
 
     @Override
     public List<EventFullDto> getEvents(
@@ -31,8 +33,10 @@ public class EventAdminServiceImpl implements EventAdminService {
             LocalDateTime rangeEnd,
             int from,
             int size) {
-        return EventMapper.eventToEventFullDto(
-                eventRepository.findEventsByParam(users, states, categories, rangeStart, rangeEnd, from, size)
+        return eventDtoService.addConfirmedRequests(
+                EventMapper.eventToEventFullDto(
+                        eventRepository.findEventsByParam(users, states, categories, rangeStart, rangeEnd, from, size)
+                )
         );
     }
 
@@ -50,8 +54,10 @@ public class EventAdminServiceImpl implements EventAdminService {
         event.setInitiator(oldEvent.getInitiator());
         event.setState(oldEvent.getState());
 
-        return EventMapper.eventToEventFullDto(
-                eventRepository.save(event)
+        return eventDtoService.addConfirmedRequests(
+                EventMapper.eventToEventFullDto(
+                        eventRepository.save(event)
+                )
         );
     }
 
@@ -75,8 +81,11 @@ public class EventAdminServiceImpl implements EventAdminService {
 
         event.setPublishedOn(datePublish);
         event.setState(EventState.PUBLISHED);
-        return EventMapper.eventToEventFullDto(
-                eventRepository.save(event)
+
+        return eventDtoService.addConfirmedRequests(
+                EventMapper.eventToEventFullDto(
+                        eventRepository.save(event)
+                )
         );
     }
 
@@ -91,8 +100,11 @@ public class EventAdminServiceImpl implements EventAdminService {
         }
 
         event.setState(EventState.CANCELED);
-        return EventMapper.eventToEventFullDto(
-                eventRepository.save(event)
+
+        return eventDtoService.addConfirmedRequests(
+                EventMapper.eventToEventFullDto(
+                        eventRepository.save(event)
+                )
         );
     }
 }

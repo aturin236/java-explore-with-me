@@ -15,7 +15,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Iterable<UserDto> getUsers(
+    public List<UserDto> getUsers(
             @RequestParam List<Long> ids,
             @RequestParam(defaultValue = "0", required = false) int from,
             @RequestParam(defaultValue = "10", required = false) int size) {

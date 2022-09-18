@@ -44,6 +44,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public void deleteEventFromCompilation(Long compId, Long eventId) {
         log.debug("Удаление события {} из подборки {}", eventId, compId);
+
         Event event = eventRepository.checkAndReturnEventIfExist(eventId);
         Compilation compilation = compilationRepository.checkAndReturnCompilationIfExist(compId);
 
@@ -62,6 +63,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public void addEventToCompilation(Long compId, Long eventId) {
         log.debug("Добавление события {} из подборки {}", eventId, compId);
+
         Event event = eventRepository.checkAndReturnEventIfExist(eventId);
         Compilation compilation = compilationRepository.checkAndReturnCompilationIfExist(compId);
 
@@ -80,6 +82,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public void compilationPinnedOff(Long id) {
         log.debug("Открепить подборку {}", id);
+
         Compilation compilation = compilationRepository.checkAndReturnCompilationIfExist(id);
         if (compilation.isPinned()) {
             compilation.setPinned(false);
@@ -90,6 +93,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public void compilationPinnedOn(Long id) {
         log.debug("Закрепить подборку {}", id);
+
         Compilation compilation = compilationRepository.checkAndReturnCompilationIfExist(id);
         if (!compilation.isPinned()) {
             compilation.setPinned(true);

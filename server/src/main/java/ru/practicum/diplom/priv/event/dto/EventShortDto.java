@@ -1,7 +1,6 @@
 package ru.practicum.diplom.priv.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
 import lombok.Data;
 import ru.practicum.diplom.admin.category.dto.CategoryDto;
 import ru.practicum.diplom.admin.user.dto.UserShortDto;
@@ -9,7 +8,6 @@ import ru.practicum.diplom.admin.user.dto.UserShortDto;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
 public class EventShortDto {
     private String annotation;
     private String title;
