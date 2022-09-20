@@ -11,7 +11,10 @@ import ru.practicum.diplom.priv.event.dto.EventShortDto;
 import ru.practicum.diplom.priv.event.dto.service.EventDtoService;
 import ru.practicum.diplom.priv.event.repository.EventRepository;
 import ru.practicum.diplom.publics.event.EventKindSort;
+import ru.practicum.diplom.stat.EventStatDto;
+import ru.practicum.diplom.stat.StatClient;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventPublicServiceImpl implements EventPublicService {
     private final EventRepository eventRepository;
+    private final StatClient statClient;
 
     private final EventDtoService eventDtoService;
 
@@ -46,7 +50,7 @@ public class EventPublicServiceImpl implements EventPublicService {
         );
         return eventDtoService.addConfirmedRequests(
                 EventMapper.eventToEventShortDto(events)
-        );//TODO добавить сортировку и поля количества реквестов и view
+        );//TODO добавить сортировку и поле view
     }
 
     @Override
@@ -61,5 +65,34 @@ public class EventPublicServiceImpl implements EventPublicService {
         return eventDtoService.addConfirmedRequests(
                 EventMapper.eventToEventShortDto(event)
         );
+    }
+
+    @Override
+    public EventShortDto saveStat(EventShortDto eventShortDto, HttpServletRequest request) {
+        saveEventStat(
+                request.getRequestURI(),
+                request.getRemoteAddr()
+        );
+
+        return eventShortDto;
+    }
+
+    @Override
+    public List<EventShortDto> saveStat(List<EventShortDto> dtoCollection, HttpServletRequest request) {
+        dtoCollection.forEach(x -> saveEventStat(
+                request.getRequestURI() + "/" + x.getId(),
+                request.getRemoteAddr()
+        ));
+        return dtoCollection;
+    }
+
+    private void saveEventStat(String uri, String ip) {
+        EventStatDto eventStatDto = new EventStatDto();
+        eventStatDto.setApp(StatClient.APP_NAME);
+        eventStatDto.setUri(uri);
+        eventStatDto.setIp(ip);
+        eventStatDto.setDate_hit(LocalDateTime.now());
+
+        statClient.save(eventStatDto);
     }
 }

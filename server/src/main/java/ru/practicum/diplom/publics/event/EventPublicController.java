@@ -6,6 +6,7 @@ import ru.practicum.diplom.exceptions.EventBadRequestException;
 import ru.practicum.diplom.priv.event.dto.EventShortDto;
 import ru.practicum.diplom.publics.event.service.EventPublicService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -26,7 +27,8 @@ public class EventPublicController {
             @RequestParam(defaultValue = "false", required = false) Boolean onlyAvailable,
             @RequestParam(defaultValue = "EVENT_DATE", required = false) EventKindSort sort,
             @RequestParam(defaultValue = "0", required = false) int from,
-            @RequestParam(defaultValue = "10", required = false) int size) {
+            @RequestParam(defaultValue = "10", required = false) int size,
+            HttpServletRequest request) {
         LocalDateTime rangeStartDate = null;
         LocalDateTime rangeEndDate = null;
 
@@ -50,20 +52,25 @@ public class EventPublicController {
             }
         }
 
-        return eventPublicService.getEvents(
-                text,
-                categories,
-                paid,
-                rangeStartDate,
-                rangeEndDate,
-                onlyAvailable,
-                sort,
-                from,
-                size);
+        return eventPublicService.saveStat(
+                eventPublicService.getEvents(
+                        text,
+                        categories,
+                        paid,
+                        rangeStartDate,
+                        rangeEndDate,
+                        onlyAvailable,
+                        sort,
+                        from,
+                        size),
+                request);
     }
 
     @GetMapping("/{id}")
-    public EventShortDto getEvent(@PathVariable Long id) {
-        return eventPublicService.getEvent(id);
+    public EventShortDto getEvent(@PathVariable Long id, HttpServletRequest request) {
+        return eventPublicService.saveStat(
+                eventPublicService.getEvent(id),
+                request
+        );
     }
 }

@@ -3,6 +3,7 @@ package ru.practicum.diplom.publics.event.service;
 import ru.practicum.diplom.priv.event.dto.EventShortDto;
 import ru.practicum.diplom.publics.event.EventKindSort;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,4 +20,8 @@ public interface EventPublicService {
             int size);
 
     EventShortDto getEvent(Long id);
+
+    EventShortDto saveStat(EventShortDto eventShortDto, HttpServletRequest request);
+
+    List<EventShortDto> saveStat(List<EventShortDto> dtoCollection, HttpServletRequest request);
 }

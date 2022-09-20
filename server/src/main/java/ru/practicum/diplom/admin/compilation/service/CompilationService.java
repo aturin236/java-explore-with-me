@@ -1,9 +1,10 @@
 package ru.practicum.diplom.admin.compilation.service;
 
 import ru.practicum.diplom.admin.compilation.dto.CompilationDto;
+import ru.practicum.diplom.admin.compilation.dto.NewCompilationDto;
 
 public interface CompilationService {
-    CompilationDto saveCompilation(CompilationDto compilationDto);
+    CompilationDto saveCompilation(NewCompilationDto compilationDto);
 
     void deleteCompilation(Long id);
 

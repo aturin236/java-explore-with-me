@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.diplom.admin.compilation.Compilation;
 import ru.practicum.diplom.admin.compilation.dto.CompilationDto;
 import ru.practicum.diplom.admin.compilation.dto.CompilationMapper;
+import ru.practicum.diplom.admin.compilation.dto.NewCompilationDto;
 import ru.practicum.diplom.admin.compilation.repository.CompilationRepository;
 import ru.practicum.diplom.exceptions.CompilationBadRequestException;
 import ru.practicum.diplom.exceptions.EventNotFoundException;
@@ -22,7 +23,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final EventRepository eventRepository;
 
     @Override
-    public CompilationDto saveCompilation(CompilationDto compilationDto) {
+    public CompilationDto saveCompilation(NewCompilationDto compilationDto) {
         log.debug("Добавление новой подборки с title {}", compilationDto.getTitle());
 
         Compilation compilation = CompilationMapper.compilationFromDto(compilationDto);

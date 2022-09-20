@@ -3,6 +3,7 @@ package ru.practicum.diplom.admin.compilation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.diplom.admin.compilation.dto.CompilationDto;
+import ru.practicum.diplom.admin.compilation.dto.NewCompilationDto;
 import ru.practicum.diplom.admin.compilation.service.CompilationService;
 
 import javax.validation.Valid;
@@ -14,7 +15,7 @@ public class CompilationController {
     private final CompilationService compilationService;
 
     @PostMapping
-    public CompilationDto saveCompilation(@Valid @RequestBody CompilationDto compilationDto) {
+    public CompilationDto saveCompilation(@Valid @RequestBody NewCompilationDto compilationDto) {
         return compilationService.saveCompilation(compilationDto);
     }
 
