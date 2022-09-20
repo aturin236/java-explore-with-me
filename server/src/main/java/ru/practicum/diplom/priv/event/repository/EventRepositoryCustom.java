@@ -2,7 +2,6 @@ package ru.practicum.diplom.priv.event.repository;
 
 import ru.practicum.diplom.priv.event.Event;
 import ru.practicum.diplom.priv.event.EventState;
-import ru.practicum.diplom.publics.event.EventKindSort;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +22,6 @@ public interface EventRepositoryCustom {
             Boolean paid,
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
-            EventKindSort sort,
             int from,
             int size);
 }

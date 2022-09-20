@@ -6,7 +6,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 import ru.practicum.diplom.priv.event.Event;
 import ru.practicum.diplom.priv.event.EventState;
-import ru.practicum.diplom.publics.event.EventKindSort;
 
 import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
@@ -75,7 +74,6 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
             Boolean paid,
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
-            EventKindSort sort,
             int from,
             int size) {
         Session session = sessionFactory.openSession();

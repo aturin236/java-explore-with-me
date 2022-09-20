@@ -16,7 +16,9 @@ import ru.practicum.diplom.stat.StatClient;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -44,13 +46,20 @@ public class EventPublicServiceImpl implements EventPublicService {
                 paid,
                 rangeStart,
                 rangeEnd,
-                sort,
                 from,
                 size
         );
-        return eventDtoService.fillAdditionalInfo(
+        List<EventShortDto> eventShortDtos = eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventShortDto(events)
-        );//TODO добавить сортировку и поле view
+        );
+
+        if (sort == EventKindSort.VIEWS) {
+            eventShortDtos = eventShortDtos.stream()
+                    .sorted(Comparator.comparing(EventShortDto::getViews).reversed())
+                    .collect(Collectors.toList());
+        }
+
+        return eventShortDtos;
     }
 
     @Override
