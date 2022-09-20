@@ -33,7 +33,7 @@ public class EventAdminServiceImpl implements EventAdminService {
             LocalDateTime rangeEnd,
             int from,
             int size) {
-        return eventDtoService.addConfirmedRequests(
+        return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(
                         eventRepository.findEventsByParam(users, states, categories, rangeStart, rangeEnd, from, size)
                 )
@@ -54,7 +54,7 @@ public class EventAdminServiceImpl implements EventAdminService {
         event.setInitiator(oldEvent.getInitiator());
         event.setState(oldEvent.getState());
 
-        return eventDtoService.addConfirmedRequests(
+        return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(
                         eventRepository.save(event)
                 )
@@ -82,7 +82,7 @@ public class EventAdminServiceImpl implements EventAdminService {
         event.setPublishedOn(datePublish);
         event.setState(EventState.PUBLISHED);
 
-        return eventDtoService.addConfirmedRequests(
+        return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(
                         eventRepository.save(event)
                 )
@@ -101,7 +101,7 @@ public class EventAdminServiceImpl implements EventAdminService {
 
         event.setState(EventState.CANCELED);
 
-        return eventDtoService.addConfirmedRequests(
+        return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(
                         eventRepository.save(event)
                 )

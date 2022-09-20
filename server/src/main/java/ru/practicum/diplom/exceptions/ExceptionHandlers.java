@@ -68,8 +68,9 @@ public class ExceptionHandlers {
                         .build());
     }
 
-    @ExceptionHandler({RuntimeException.class})
-    public ResponseEntity<ApiError> handle505(RuntimeException e) {
+    @ExceptionHandler({RuntimeException.class,
+            EventStatDtoInternalException.class})
+    public ResponseEntity<ApiError> handle500(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiError.builder()

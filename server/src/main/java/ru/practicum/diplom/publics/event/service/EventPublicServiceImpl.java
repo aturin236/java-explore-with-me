@@ -48,7 +48,7 @@ public class EventPublicServiceImpl implements EventPublicService {
                 from,
                 size
         );
-        return eventDtoService.addConfirmedRequests(
+        return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventShortDto(events)
         );//TODO добавить сортировку и поле view
     }
@@ -62,7 +62,7 @@ public class EventPublicServiceImpl implements EventPublicService {
                     String.format("Попытка получения не опубликованного события по id %s", id)
             );
         }
-        return eventDtoService.addConfirmedRequests(
+        return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventShortDto(event)
         );
     }

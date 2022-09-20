@@ -40,7 +40,7 @@ public class StatClient extends BaseClient {
     ) throws UnsupportedEncodingException {
         Map<String, Object> parameters = Map.of(
                 "start", URLEncoder.encode(start.toString(), StandardCharsets.UTF_8.toString()),
-                "end", URLEncoder.encode(start.toString(), StandardCharsets.UTF_8.toString()),
+                "end", URLEncoder.encode(end.toString(), StandardCharsets.UTF_8.toString()),
                 "uris", uris,
                 "unique", unique
         );

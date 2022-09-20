@@ -54,7 +54,7 @@ public class EventServiceImpl implements EventService {
         event.setInitiator(userRepository.checkAndReturnUserIfExist(userId));
         event.setState(EventState.PENDING);
 
-        return eventDtoService.addConfirmedRequests(
+        return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(
                         eventRepository.save(event)
                 )
@@ -84,7 +84,7 @@ public class EventServiceImpl implements EventService {
             event.setCategory(categoryRepository.checkAndReturnCategoryIfExist(eventDto.getCategory()));
         }
 
-        return eventDtoService.addConfirmedRequests(
+        return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(
                         eventRepository.save(event)
                 )
@@ -104,7 +104,7 @@ public class EventServiceImpl implements EventService {
 
         event.setState(EventState.CANCELED);
 
-        return eventDtoService.addConfirmedRequests(
+        return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(
                         eventRepository.save(event)
                 )
@@ -118,7 +118,7 @@ public class EventServiceImpl implements EventService {
         User user = userRepository.checkAndReturnUserIfExist(userId);
         Pageable pageRequest = PageRequest.of(from, size);
 
-        return eventDtoService.addConfirmedRequests(
+        return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(
                         eventRepository.findEventsByInitiator(user, pageRequest)
                 )
@@ -131,7 +131,7 @@ public class EventServiceImpl implements EventService {
 
         String error = "Нельзя смотреть чужие события. Владелец %s";
 
-        return eventDtoService.addConfirmedRequests(
+        return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(
                         getVerifiedEvent(userId, eventId, error)
                 )
