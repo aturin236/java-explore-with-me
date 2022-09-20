@@ -99,12 +99,18 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public int countRequestByEventOrThrowException(Event event) {
         int requestCount = requestRepository.countRequestByEventAndStatus(event, RequestStatus.CONFIRMED);
-        if (requestCount >= event.getParticipantLimit()) {
+        if (isExceededLimitOfRequests(requestCount, event.getParticipantLimit())) {
             throw new RequestForbiddenException(
                     "Достигнут предел заявок на участие в событии"
             );
         }
 
         return requestCount;
+    }
+
+    @Override
+    public boolean isExceededLimitOfRequests(int requestCount, int limit) {
+
+        return limit != 0 && requestCount >= limit;
     }
 }

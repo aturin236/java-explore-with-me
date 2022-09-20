@@ -41,18 +41,15 @@ public class EventAdminServiceImpl implements EventAdminService {
     }
 
     @Override
-    public EventFullDto updateEvent(Long id, NewEventDto newEventDto) {
+    public EventFullDto updateEvent(Long id, NewEventDto eventDto) {
         log.debug("Запрос updateEvent по id - {}", id);
 
-        Event oldEvent = eventRepository.checkAndReturnEventIfExist(id);
+        Event event = eventRepository.checkAndReturnEventIfExist(id);
 
-        Event event = EventMapper.newEventDtoToEvent(newEventDto);
-        event.setCategory(categoryRepository.checkAndReturnCategoryIfExist(newEventDto.getCategory()));
-        event.setId(oldEvent.getId());
-        event.setCreatedOn(oldEvent.getCreatedOn());
-        event.setPublishedOn(oldEvent.getPublishedOn());
-        event.setInitiator(oldEvent.getInitiator());
-        event.setState(oldEvent.getState());
+        eventDto.setFieldsToEvent(event);
+        if (eventDto.getCategory() != null) event.setCategory(
+                categoryRepository.checkAndReturnCategoryIfExist(eventDto.getCategory())
+        );
 
         return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(

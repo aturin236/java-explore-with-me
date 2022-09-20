@@ -19,4 +19,6 @@ public interface RequestService {
      * @return количество подтвержденных заявок на участие
      */
     int countRequestByEventOrThrowException(Event event);
+
+    boolean isExceededLimitOfRequests(int requestCount, int limit);
 }

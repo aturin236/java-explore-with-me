@@ -11,7 +11,7 @@ public class EventMapper {
     public static Event newEventDtoToEvent(NewEventDto eventDto) {
         Event event = updateEventDtoToEvent(eventDto);
         event.setId(null);
-        event.setRequestModeration(eventDto.isRequestModeration());
+        event.setRequestModeration(eventDto.getRequestModeration());
         Location location = eventDto.getLocation();
         if (location != null) {
             event.setLatitude(location.getLat());
@@ -28,7 +28,7 @@ public class EventMapper {
         event.setDescription(eventDto.getDescription());
         event.setTitle(eventDto.getTitle());
         event.setEventDate(eventDto.getEventDate());
-        event.setPaid(eventDto.isPaid());
+        event.setPaid(eventDto.getPaid());
         event.setParticipantLimit(eventDto.getParticipantLimit());
 
         return event;
@@ -67,6 +67,7 @@ public class EventMapper {
         eventShortDto.setId(event.getId());
         eventShortDto.setTitle(event.getTitle());
         eventShortDto.setAnnotation(event.getAnnotation());
+        eventShortDto.setDescription(event.getDescription());
         eventShortDto.setEventDate(event.getEventDate());
         eventShortDto.setCategory(CategoryMapper.toCategoryDto(event.getCategory()));
         eventShortDto.setPaid(event.isPaid());

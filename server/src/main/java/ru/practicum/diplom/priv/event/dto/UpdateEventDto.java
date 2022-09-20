@@ -3,6 +3,7 @@ package ru.practicum.diplom.priv.event.dto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import ru.practicum.diplom.json.CustomDateDeserializer;
+import ru.practicum.diplom.priv.event.Event;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,15 @@ public class UpdateEventDto {
     @JsonDeserialize(using = CustomDateDeserializer.class)
     private LocalDateTime eventDate;
     private Long category;
-    private boolean paid;
+    private Boolean paid;
     private Integer participantLimit;
+
+    public void setFieldsToEvent(Event event) {
+        if (annotation != null) event.setAnnotation(annotation);
+        if (description != null) event.setDescription(description);
+        if (title != null) event.setTitle(title);
+        if (eventDate != null) event.setEventDate(eventDate);
+        if (paid != null) event.setPaid(paid);
+        if (participantLimit != null) event.setParticipantLimit(participantLimit);
+    }
 }

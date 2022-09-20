@@ -74,15 +74,10 @@ public class EventServiceImpl implements EventService {
             throw new EventForbiddenException("Событие уже опубликовано");
         }
 
-        event.setAnnotation(eventDto.getAnnotation());
-        event.setDescription(eventDto.getDescription());
-        event.setTitle(eventDto.getTitle());
-        event.setEventDate(eventDto.getEventDate());
-        event.setPaid(eventDto.isPaid());
-        event.setParticipantLimit(eventDto.getParticipantLimit());
-        if (!Objects.equals(event.getCategory().getId(), eventDto.getCategory())) {
-            event.setCategory(categoryRepository.checkAndReturnCategoryIfExist(eventDto.getCategory()));
-        }
+        eventDto.setFieldsToEvent(event);
+        if (eventDto.getCategory() != null) event.setCategory(
+                categoryRepository.checkAndReturnCategoryIfExist(eventDto.getCategory())
+        );
 
         return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(
@@ -168,7 +163,7 @@ public class EventServiceImpl implements EventService {
         int requestCount = requestService.countRequestByEventOrThrowException(event);
         requestCount++;
 
-        if (requestCount >= event.getParticipantLimit()) {
+        if (requestService.isExceededLimitOfRequests(requestCount, event.getParticipantLimit())) {
             rejectOpenRequest(event);
         }
 
@@ -187,11 +182,11 @@ public class EventServiceImpl implements EventService {
         Request request = getVerifiedRequest(
                 reqId,
                 eventId,
-                RequestStatus.CANCELED,
+                RequestStatus.REJECTED,
                 "Запрос уже отменен"
         );
 
-        request.setStatus(RequestStatus.CANCELED);
+        request.setStatus(RequestStatus.REJECTED);
 
         return RequestMapper.requestToDto(requestRepository.save(request));
     }
@@ -237,7 +232,7 @@ public class EventServiceImpl implements EventService {
     private void rejectOpenRequest(Event event) {
         List<Request> requests = requestRepository.findRequestsByEventAndStatus(event, RequestStatus.PENDING);
 
-        requests.forEach(x -> x.setStatus(RequestStatus.CANCELED));
+        requests.forEach(x -> x.setStatus(RequestStatus.REJECTED));
 
         requestRepository.saveAll(requests);
     }
