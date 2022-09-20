@@ -19,8 +19,7 @@ public class StatClient extends BaseClient {
     public static final String APP_NAME = "explore with me";
 
     @Autowired
-    //public StatClient(@Value("${stat-server.url}") String serverUrl, RestTemplateBuilder builder) {
-    public StatClient(@Value("http://localhost:9091") String serverUrl, RestTemplateBuilder builder) {//todo
+    public StatClient(@Value("${stat-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
