@@ -12,5 +12,5 @@ public class EventStatDto {
     private String uri;
     private String ip;
     @JsonDeserialize(using = CustomDateDeserializer.class)
-    private LocalDateTime date_hit;
+    private LocalDateTime dateHit;
 }

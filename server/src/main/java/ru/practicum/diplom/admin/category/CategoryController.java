@@ -14,12 +14,12 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public CategoryDto SaveCategory(@Valid @RequestBody CategoryDto categoryDto) {
+    public CategoryDto saveCategory(@Valid @RequestBody CategoryDto categoryDto) {
         return categoryService.saveCategory(categoryDto);
     }
 
     @PatchMapping
-    public CategoryDto UpdateCategory(@Valid @RequestBody CategoryDto categoryDto) {
+    public CategoryDto updateCategory(@Valid @RequestBody CategoryDto categoryDto) {
         return categoryService.updateCategory(categoryDto);
     }
 

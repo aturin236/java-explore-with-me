@@ -14,5 +14,5 @@ public class EventStatDto {
     private String ip;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = CustomDateDeserializer.class)
-    private LocalDateTime date_hit;
+    private LocalDateTime dateHit;
 }

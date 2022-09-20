@@ -91,7 +91,7 @@ public class EventPublicServiceImpl implements EventPublicService {
         eventStatDto.setApp(StatClient.APP_NAME);
         eventStatDto.setUri(uri);
         eventStatDto.setIp(ip);
-        eventStatDto.setDate_hit(LocalDateTime.now());
+        eventStatDto.setDateHit(LocalDateTime.now());
 
         statClient.save(eventStatDto);
     }

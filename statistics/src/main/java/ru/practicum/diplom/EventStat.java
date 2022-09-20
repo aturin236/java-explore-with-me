@@ -15,6 +15,7 @@ public class EventStat {
     private String app;
     private String uri;
     private String ip;
-    private LocalDateTime date_hit;
+    @Column(name = "date_hit")
+    private LocalDateTime dateHit;
 
 }
