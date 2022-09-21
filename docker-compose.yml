@@ -38,7 +38,7 @@ services:
     depends_on:
       - statistics
     environment:
-      - STATS_SERVER_URL=http://statistics:9091
+      - STATS_SERVER_URL=http://statistics:9090
       - SPRING_DATASOURCE_URL=jdbc:postgresql://server-db:5432/diplom
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
