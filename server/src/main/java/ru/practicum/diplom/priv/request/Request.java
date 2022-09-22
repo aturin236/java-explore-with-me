@@ -22,5 +22,6 @@ public class Request {
     @JoinColumn(name = "requester")
     private User requester;
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 100, nullable = false)
     private RequestStatus status;
 }

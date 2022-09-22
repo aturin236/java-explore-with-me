@@ -13,11 +13,4 @@ public class EventStatMapper {
         return eventStat;
     }
 
-    public static EventStatDtoView eventStatToDtoView(EventStat eventStat) {
-        EventStatDtoView dtoView = new EventStatDtoView();
-        dtoView.setApp(eventStat.getApp());
-        dtoView.setUri(eventStat.getUri());
-
-        return dtoView;
-    }
 }

@@ -31,6 +31,9 @@ public class CompilationRepositoryImpl implements CompilationRepositoryCustom {
         }
 
         cq.where(predicate);
+
+        cq.orderBy(cb.asc(root.get("id")));
+
         List<Compilation> results = session.createQuery(cq)
                 .setFirstResult(from)
                 .setMaxResults(size)

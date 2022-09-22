@@ -21,7 +21,5 @@ public interface EventRepositoryCustom {
             List<Long> categories,
             Boolean paid,
             LocalDateTime rangeStart,
-            LocalDateTime rangeEnd,
-            int from,
-            int size);
+            LocalDateTime rangeEnd);
 }

@@ -56,9 +56,8 @@ public class EventMapper {
 
     public static List<EventFullDto> eventToEventFullDto(Iterable<Event> events) {
         List<EventFullDto> dtos = new ArrayList<>();
-        for (Event event : events) {
-            dtos.add(eventToEventFullDto(event));
-        }
+        events.forEach(x -> dtos.add(eventToEventFullDto(x)));
+
         return dtos;
     }
 
@@ -78,9 +77,8 @@ public class EventMapper {
 
     public static List<EventShortDto> eventToEventShortDto(Iterable<Event> events) {
         List<EventShortDto> dtos = new ArrayList<>();
-        for (Event event : events) {
-            dtos.add(eventToEventShortDto(event));
-        }
+        events.forEach(x -> dtos.add(eventToEventShortDto(x)));
+
         return dtos;
     }
 }

@@ -73,9 +73,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
             List<Long> categories,
             Boolean paid,
             LocalDateTime rangeStart,
-            LocalDateTime rangeEnd,
-            int from,
-            int size) {
+            LocalDateTime rangeEnd) {
         Session session = sessionFactory.openSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<Event> cq = cb.createQuery(Event.class);
@@ -125,10 +123,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
         cq.orderBy(cb.asc(root.get("eventDate")));
 
-        List<Event> results = session.createQuery(cq)
-                .setFirstResult(from)
-                .setMaxResults(size)
-                .getResultList();
+        List<Event> results = session.createQuery(cq).getResultList();
 
         session.close();
 

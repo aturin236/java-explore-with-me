@@ -18,9 +18,8 @@ public class RequestMapper {
 
     public static List<RequestDto> requestToDto(Iterable<Request> requests) {
         List<RequestDto> dtos = new ArrayList<>();
-        for (Request request : requests) {
-            dtos.add(requestToDto(request));
-        }
+        requests.forEach(x -> dtos.add(requestToDto(x)));
+
         return dtos;
     }
 }

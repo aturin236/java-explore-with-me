@@ -45,21 +45,13 @@ public class EventPublicServiceImpl implements EventPublicService {
                 categories,
                 paid,
                 rangeStart,
-                rangeEnd,
-                from,
-                size
+                rangeEnd
         );
         List<EventShortDto> eventShortDtos = eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventShortDto(events)
         );
 
-        if (sort == EventKindSort.VIEWS) {
-            eventShortDtos = eventShortDtos.stream()
-                    .sorted(Comparator.comparing(EventShortDto::getViews).reversed())
-                    .collect(Collectors.toList());
-        }
-
-        return eventShortDtos;
+        return sortEventList(eventShortDtos, sort, from, size);
     }
 
     @Override
@@ -103,5 +95,26 @@ public class EventPublicServiceImpl implements EventPublicService {
         eventStatDto.setDateHit(LocalDateTime.now());
 
         statClient.save(eventStatDto);
+    }
+
+    private List<EventShortDto> sortEventList(
+            List<EventShortDto> eventList,
+            EventKindSort sort,
+            int from,
+            int size) {
+        if (sort == EventKindSort.VIEWS) {
+            eventList = eventList.stream()
+                    .sorted(Comparator.comparing(EventShortDto::getViews).reversed())
+                    .skip(from)
+                    .limit(size)
+                    .collect(Collectors.toList());
+        } else {
+            eventList = eventList.stream()
+                    .skip(from)
+                    .limit(size)
+                    .collect(Collectors.toList());
+        }
+
+        return eventList;
     }
 }

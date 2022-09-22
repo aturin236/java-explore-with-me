@@ -47,9 +47,11 @@ public class EventAdminServiceImpl implements EventAdminService {
         Event event = eventRepository.checkAndReturnEventIfExist(id);
 
         eventDto.setFieldsToEvent(event);
-        if (eventDto.getCategory() != null) event.setCategory(
-                categoryRepository.checkAndReturnCategoryIfExist(eventDto.getCategory())
-        );
+        if (eventDto.getCategory() != null) {
+            event.setCategory(
+                    categoryRepository.checkAndReturnCategoryIfExist(eventDto.getCategory())
+            );
+        }
 
         return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(
@@ -79,11 +81,9 @@ public class EventAdminServiceImpl implements EventAdminService {
         event.setPublishedOn(datePublish);
         event.setState(EventState.PUBLISHED);
 
-        return eventDtoService.fillAdditionalInfo(
-                EventMapper.eventToEventFullDto(
-                        eventRepository.save(event)
-                )
-        );
+        EventFullDto eventFullDto = EventMapper.eventToEventFullDto(eventRepository.save(event));
+
+        return eventDtoService.fillAdditionalInfo(eventFullDto);
     }
 
     @Override

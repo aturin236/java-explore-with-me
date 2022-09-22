@@ -54,11 +54,9 @@ public class EventServiceImpl implements EventService {
         event.setInitiator(userRepository.checkAndReturnUserIfExist(userId));
         event.setState(EventState.PENDING);
 
-        return eventDtoService.fillAdditionalInfo(
-                EventMapper.eventToEventFullDto(
-                        eventRepository.save(event)
-                )
-        );
+        EventFullDto eventFullDto = EventMapper.eventToEventFullDto(eventRepository.save(event));
+
+        return eventDtoService.fillAdditionalInfo(eventFullDto);
     }
 
     @Override
@@ -75,9 +73,11 @@ public class EventServiceImpl implements EventService {
         }
 
         eventDto.setFieldsToEvent(event);
-        if (eventDto.getCategory() != null) event.setCategory(
-                categoryRepository.checkAndReturnCategoryIfExist(eventDto.getCategory())
-        );
+        if (eventDto.getCategory() != null) {
+            event.setCategory(
+                    categoryRepository.checkAndReturnCategoryIfExist(eventDto.getCategory())
+            );
+        }
 
         return eventDtoService.fillAdditionalInfo(
                 EventMapper.eventToEventFullDto(

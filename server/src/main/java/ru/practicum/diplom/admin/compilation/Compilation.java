@@ -16,6 +16,7 @@ public class Compilation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
+    @Column(name = "title", length = 250, nullable = false)
     private String title;
     private boolean pinned;
     @EqualsAndHashCode.Exclude

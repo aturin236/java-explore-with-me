@@ -14,8 +14,9 @@ public class CompilationMapper {
         compilationDto.setPinned(compilation.isPinned());
         if (compilation.getEvents() != null) {
             compilationDto.setEvents(EventMapper.eventToEventFullDto(
-                    compilation.getEvents()
-            ));
+                            compilation.getEvents()
+                    )
+            );
         }
 
         return compilationDto;
@@ -23,9 +24,8 @@ public class CompilationMapper {
 
     public static List<CompilationDto> compilationToDto(Iterable<Compilation> compilations) {
         List<CompilationDto> dtos = new ArrayList<>();
-        for (Compilation compilation : compilations) {
-            dtos.add(compilationToDto(compilation));
-        }
+        compilations.forEach(x -> dtos.add(compilationToDto(x)));
+
         return dtos;
     }
 

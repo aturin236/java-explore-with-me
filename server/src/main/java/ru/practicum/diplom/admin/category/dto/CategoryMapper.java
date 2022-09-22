@@ -15,9 +15,8 @@ public class CategoryMapper {
 
     public static List<CategoryDto> toCategoryDto(Iterable<Category> categories) {
         List<CategoryDto> dtos = new ArrayList<>();
-        for (Category category : categories) {
-            dtos.add(toCategoryDto(category));
-        }
+        categories.forEach(x -> dtos.add(toCategoryDto(x)));
+
         return dtos;
     }
 

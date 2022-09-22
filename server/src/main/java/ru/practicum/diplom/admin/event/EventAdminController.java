@@ -9,6 +9,7 @@ import ru.practicum.diplom.priv.event.dto.EventFullDto;
 import ru.practicum.diplom.priv.event.dto.NewEventDto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
@@ -30,9 +31,11 @@ public class EventAdminController {
         LocalDateTime rangeStartDate;
         LocalDateTime rangeEndDate;
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         try {
-            rangeStartDate = LocalDateTime.parse(rangeStart);
-            rangeEndDate = LocalDateTime.parse(rangeEnd);
+            rangeStartDate = LocalDateTime.parse(rangeStart, formatter);
+            rangeEndDate = LocalDateTime.parse(rangeEnd, formatter);
         } catch (DateTimeParseException e) {
             throw new EventBadRequestException(
                     String.format("Неверный формат дат rangeStart %s или rangeEnd %s", rangeStart, rangeEnd)

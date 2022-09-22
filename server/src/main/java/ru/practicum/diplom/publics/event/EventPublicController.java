@@ -8,6 +8,7 @@ import ru.practicum.diplom.publics.event.service.EventPublicService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
@@ -32,9 +33,11 @@ public class EventPublicController {
         LocalDateTime rangeStartDate = null;
         LocalDateTime rangeEndDate = null;
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         if (rangeStart != null) {
             try {
-                rangeStartDate = LocalDateTime.parse(rangeStart);
+                rangeStartDate = LocalDateTime.parse(rangeStart, formatter);
             } catch (DateTimeParseException e) {
                 throw new EventBadRequestException(
                         String.format("Неверный формат даты rangeStart %s", rangeStart)
@@ -44,7 +47,7 @@ public class EventPublicController {
 
         if (rangeEnd != null) {
             try {
-                rangeEndDate = LocalDateTime.parse(rangeEnd);
+                rangeEndDate = LocalDateTime.parse(rangeEnd, formatter);
             } catch (DateTimeParseException e) {
                 throw new EventBadRequestException(
                         String.format("Неверный формат даты rangeEnd %s", rangeEnd)
