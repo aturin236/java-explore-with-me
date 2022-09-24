@@ -30,7 +30,8 @@ public class ExceptionHandlers {
     }
 
     @ExceptionHandler({EventForbiddenException.class,
-            RequestForbiddenException.class})
+            RequestForbiddenException.class,
+            RatingForbiddenException.class})
     public ResponseEntity<ApiError> handle403(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)

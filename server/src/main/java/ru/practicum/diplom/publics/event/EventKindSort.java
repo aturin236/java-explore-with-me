@@ -2,5 +2,7 @@ package ru.practicum.diplom.publics.event;
 
 public enum EventKindSort {
     EVENT_DATE,
-    VIEWS
+    VIEWS,
+    EVENT_RATING,
+    EVENT_INITIATOR_RATING
 }

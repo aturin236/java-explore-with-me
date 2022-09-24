@@ -1,4 +1,4 @@
-package ru.practicum.diplom;
+package ru.practicum.diplom.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

@@ -102,17 +102,33 @@ public class EventPublicServiceImpl implements EventPublicService {
             EventKindSort sort,
             int from,
             int size) {
-        if (sort == EventKindSort.VIEWS) {
-            eventList = eventList.stream()
-                    .sorted(Comparator.comparing(EventShortDto::getViews).reversed())
-                    .skip(from)
-                    .limit(size)
-                    .collect(Collectors.toList());
-        } else {
-            eventList = eventList.stream()
-                    .skip(from)
-                    .limit(size)
-                    .collect(Collectors.toList());
+        switch (sort) {
+            case VIEWS:
+                eventList = eventList.stream()
+                        .sorted(Comparator.comparing(EventShortDto::getViews).reversed())
+                        .skip(from)
+                        .limit(size)
+                        .collect(Collectors.toList());
+                break;
+            case EVENT_RATING:
+                eventList = eventList.stream()
+                        .sorted(Comparator.comparing(EventShortDto::getEventRating).reversed())
+                        .skip(from)
+                        .limit(size)
+                        .collect(Collectors.toList());
+                break;
+            case EVENT_INITIATOR_RATING:
+                eventList = eventList.stream()
+                        .sorted(Comparator.comparing(EventShortDto::getEventInitiatorRating).reversed())
+                        .skip(from)
+                        .limit(size)
+                        .collect(Collectors.toList());
+                break;
+            default:
+                eventList = eventList.stream()
+                        .skip(from)
+                        .limit(size)
+                        .collect(Collectors.toList());
         }
 
         return eventList;
