@@ -1,15 +1,45 @@
 version: '3.1'
 services:
-  stats-server:
+  server-db:
+    image: postgres:14-alpine
     ports:
-      - "9090:9090"
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=diplom
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
 
   stats-db:
     image: postgres:14-alpine
+    ports:
+      - "6542:5432"
+    depends_on:
+      - server-db
+    environment:
+      - POSTGRES_DB=diplom_stat
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
 
-  ewm-service:
+  statistics:
+    build: ./statistics
+    ports:
+      - "9090:9090"
+    depends_on:
+      - stats-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/diplom_stat
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+
+  server:
+    build: ./server
     ports:
       - "8080:8080"
+    depends_on:
+      - statistics
+    environment:
+      - STATS_SERVER_URL=http://statistics:9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://server-db:5432/diplom
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
 
-  ewm-db:
-    image: postgres:14-alpine
