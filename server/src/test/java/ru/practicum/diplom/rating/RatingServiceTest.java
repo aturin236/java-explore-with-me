@@ -109,7 +109,7 @@ public class RatingServiceTest {
                 EventLike.class);
         EventLike eventLike = query.setParameter("id", eventFullDto.getId()).getSingleResult();
 
-        assertThat(eventLike.getId(), notNullValue());
+        assertThat(eventLike.getEvent(), notNullValue());
         assertThat(eventLike.isLike(), equalTo(true));
     }
 
@@ -135,13 +135,13 @@ public class RatingServiceTest {
         ratingService.dislikeEvent(userDto4.getId(), eventFullDto.getId());
 
         TypedQuery<EventRating> query = entityManager.createQuery(
-                "Select er from EventRating er where er.event.id = :id",
+                "Select er from EventRating er where er.eventId = :id",
                 EventRating.class);
         EventRating eventRating = query.setParameter("id", eventFullDto.getId()).getSingleResult();
 
-        assertThat(eventRating.getId(), notNullValue());
-        assertThat(eventRating.getCountLike(), equalTo(2L));
-        assertThat(eventRating.getCountDislike(), equalTo(1L));
+        assertThat(eventRating.getEvent(), notNullValue());
+        assertThat(eventRating.getLikesCount(), equalTo(2L));
+        assertThat(eventRating.getDislikesCount(), equalTo(1L));
     }
 
     /**

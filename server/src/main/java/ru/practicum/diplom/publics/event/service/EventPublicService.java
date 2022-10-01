@@ -1,7 +1,7 @@
 package ru.practicum.diplom.publics.event.service;
 
 import ru.practicum.diplom.priv.event.dto.EventShortDto;
-import ru.practicum.diplom.publics.event.EventKindSort;
+import ru.practicum.diplom.publics.event.EventSortKey;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ public interface EventPublicService {
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
             Boolean onlyAvailable,
-            EventKindSort sort,
+            EventSortKey sort,
             int from,
             int size);
 

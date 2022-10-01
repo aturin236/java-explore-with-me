@@ -102,12 +102,12 @@ public class EventDtoServiceImpl implements EventDtoService {
     private Map<Long, Long> getEventRating(List<Long> ids) {
         List<EventRating> ratingsList = eventRatingRepository.findEventRatingsByEvents(ids);
         Map<Long, Long> ratings = new HashMap<>();
-        ratingsList.forEach(x -> ratings.put(x.getEvent().getId(), x.getCountLike() - x.getCountDislike()));
+        ratingsList.forEach(x -> ratings.put(x.getEvent().getId(), x.getLikesCount() - x.getDislikesCount()));
         return ratings;
     }
 
     private Map<Long, Long> getEventInitiatorRating(List<Long> ids) {
-        String sqlQuery = "SELECT ev.initiator as initiator, count(er.count_like - er.count_dislike) as rating\n" +
+        String sqlQuery = "SELECT ev.initiator as initiator, count(er.likes_count - er.dislikes_count) as rating\n" +
                 "from event_ratings er\n" +
                 "INNER join events ev ON er.event = ev.id\n" +
                 "Where er.event in (:ids)\n" +

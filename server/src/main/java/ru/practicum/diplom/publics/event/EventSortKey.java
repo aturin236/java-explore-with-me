@@ -1,6 +1,6 @@
 package ru.practicum.diplom.publics.event;
 
-public enum EventKindSort {
+public enum EventSortKey {
     EVENT_DATE,
     VIEWS,
     EVENT_RATING,

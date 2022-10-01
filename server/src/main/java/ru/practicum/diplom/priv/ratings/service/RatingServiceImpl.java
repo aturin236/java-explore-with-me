@@ -17,11 +17,11 @@ import ru.practicum.diplom.priv.ratings.repository.EventRatingRepository;
 import ru.practicum.diplom.priv.request.RequestStatus;
 import ru.practicum.diplom.priv.request.repository.RequestRepository;
 
+import javax.persistence.EntityManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -33,6 +33,7 @@ public class RatingServiceImpl implements RatingService {
     private final EventRatingRepository eventRatingRepository;
     private final RequestRepository requestRepository;
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final EntityManager entityManager;
 
     @Override
     public void likeEvent(Long userId, Long eventId) {
@@ -75,16 +76,9 @@ public class RatingServiceImpl implements RatingService {
             throw new RatingForbiddenException("Нельзя лайкать событие, в котором не участвовал");
         }
 
-        Optional<EventLike> eventLikeOptional = eventLikeRepository.findByEventAndRequester(event, user);
-        EventLike eventLike;
-
-        if (eventLikeOptional.isEmpty()) {
-            eventLike = new EventLike();
-            eventLike.setEvent(event);
-            eventLike.setRequester(user);
-        } else {
-            eventLike = eventLikeOptional.get();
-        }
+        EventLike eventLike = eventLikeRepository
+                .findByEventAndRequester(event, user)
+                .orElseGet(() -> new EventLike(event, user));
         eventLike.setLike(isLike);
 
         return eventLike;
@@ -96,30 +90,31 @@ public class RatingServiceImpl implements RatingService {
      * @param eventLike - событие, для которого будет пересчет лайков/дизлайков
      */
     private void updateEventRatings(EventLike eventLike) {
+        entityManager.flush();
+
         String sqlQuery = "SELECT " +
                 "SUM(CASE " +
-                "WHEN is_like THEN 1 ELSE 0 END) as count_like, " +
+                "WHEN is_like THEN 1 ELSE 0 END) as likes_count, " +
                 "SUM(CASE " +
-                "WHEN is_like THEN 0 ELSE 1 END) as count_dislike " +
+                "WHEN is_like THEN 0 ELSE 1 END) as dislikes_count " +
                 "FROM public.event_likes " +
                 "WHERE event = :eventId " +
                 "GROUP BY event";
         MapSqlParameterSource paramSource = new MapSqlParameterSource();
-        paramSource.addValue("eventId", eventLike.getEvent().getId());
+        paramSource.addValue("eventId", eventLike.getEventId());
 
         List<EventRating> eventRatings = jdbcTemplate.query(sqlQuery, paramSource,
                 (rs, rowNum) -> makeEventRating(rs, eventLike));
 
-        EventRating eventRating = eventRatingRepository.findEventRatingByEvent(eventLike.getEvent())
-                .orElse(newEventRating(eventLike, 0L, 0L));
-
         if (eventRatings.size() == 0) {
-            eventRating.setCountLike(0L);
-            eventRating.setCountDislike(0L);
+            EventRating eventRating = eventRatingRepository.findEventRatingByEvent(eventLike.getEvent())
+                    .orElseGet(() -> newEventRating(eventLike, 0L, 0L));
+
+            eventRating.setLikesCount(0L);
+            eventRating.setDislikesCount(0L);
             eventRatingRepository.save(eventRating);
         } else {
             EventRating eventRatingUpdate = eventRatings.get(0);
-            eventRatingUpdate.setId(eventRating.getId());
             eventRatingRepository.save(eventRatingUpdate);
         }
     }
@@ -127,16 +122,17 @@ public class RatingServiceImpl implements RatingService {
     private EventRating makeEventRating(ResultSet rs, EventLike eventLike) throws SQLException {
         return newEventRating(
                 eventLike,
-                rs.getLong("count_like"),
-                rs.getLong("count_dislike")
+                rs.getLong("likes_count"),
+                rs.getLong("dislikes_count")
         );
     }
 
-    private EventRating newEventRating(EventLike eventLike, Long countLike, Long countDislike) {
+    private EventRating newEventRating(EventLike eventLike, long likesCount, long dislikesCount) {
         EventRating eventRating = new EventRating();
+        eventRating.setEventId(eventLike.getEventId());
         eventRating.setEvent(eventLike.getEvent());
-        eventRating.setCountLike(countLike);
-        eventRating.setCountDislike(countDislike);
+        eventRating.setLikesCount(likesCount);
+        eventRating.setDislikesCount(dislikesCount);
 
         return eventRating;
     }
