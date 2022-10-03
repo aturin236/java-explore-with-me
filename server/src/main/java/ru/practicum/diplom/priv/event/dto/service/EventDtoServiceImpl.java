@@ -85,10 +85,9 @@ public class EventDtoServiceImpl implements EventDtoService {
         List<ConfirmedRequestsInfo> infos = jdbcTemplate.query(sqlQuery, paramSource,
                 (rs, rowNum) -> makeConfirmedRequestsInfo(rs));
 
-        Map<Long, Integer> infosResult = new HashMap<>();
-        infos.forEach(x -> infosResult.put(x.getEventId(), x.getCountRequests()));
-
-        return infosResult;
+        return infos
+                .stream()
+                .collect(Collectors.toMap(ConfirmedRequestsInfo::getEventId, ConfirmedRequestsInfo::getCountRequests));
     }
 
     private ConfirmedRequestsInfo makeConfirmedRequestsInfo(ResultSet rs) throws SQLException {
