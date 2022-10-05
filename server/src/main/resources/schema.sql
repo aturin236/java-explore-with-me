@@ -4,6 +4,8 @@
 --DROP TABLE IF EXISTS compilation CASCADE;
 --DROP TABLE IF EXISTS compilation_events CASCADE;
 --DROP TABLE IF EXISTS participation_request CASCADE;
+--DROP TABLE IF EXISTS event_likes CASCADE;
+--DROP TABLE IF EXISTS event_ratings CASCADE;
 
 CREATE TABLE IF NOT EXISTS category
 (
@@ -71,5 +73,26 @@ CREATE TABLE IF NOT EXISTS participation_request
     CONSTRAINT pk_participation_request PRIMARY KEY (id),
     CONSTRAINT FK_PR_ON_EVENT FOREIGN KEY (event) REFERENCES events (id),
     CONSTRAINT FK_PR_ON_USER FOREIGN KEY (requester) REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS event_likes
+(
+    event     BIGINT NOT NULL,
+    requester BIGINT NOT NULL,
+    is_like   BOOLEAN,
+    CONSTRAINT pk_event_likes PRIMARY KEY (event, requester),
+    CONSTRAINT FK_EL_ON_EVENT FOREIGN KEY (event) REFERENCES events (id),
+    CONSTRAINT FK_EL_ON_USER FOREIGN KEY (requester) REFERENCES users (id)
+
+);
+
+CREATE TABLE IF NOT EXISTS event_ratings
+(
+    event          BIGINT NOT NULL,
+    likes_count    BIGINT,
+    dislikes_count BIGINT,
+    CONSTRAINT pk_event_ratings PRIMARY KEY (event),
+    CONSTRAINT FK_ER_ON_EVENT FOREIGN KEY (event) REFERENCES events (id)
+
 );
 

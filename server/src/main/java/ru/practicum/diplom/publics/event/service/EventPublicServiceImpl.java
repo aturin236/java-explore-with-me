@@ -10,7 +10,7 @@ import ru.practicum.diplom.priv.event.dto.EventMapper;
 import ru.practicum.diplom.priv.event.dto.EventShortDto;
 import ru.practicum.diplom.priv.event.dto.service.EventDtoService;
 import ru.practicum.diplom.priv.event.repository.EventRepository;
-import ru.practicum.diplom.publics.event.EventKindSort;
+import ru.practicum.diplom.publics.event.EventSortKey;
 import ru.practicum.diplom.stat.EventStatDto;
 import ru.practicum.diplom.stat.StatClient;
 
@@ -37,7 +37,7 @@ public class EventPublicServiceImpl implements EventPublicService {
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
             Boolean onlyAvailable,
-            EventKindSort sort,
+            EventSortKey sort,
             int from,
             int size) {
         List<Event> events = eventRepository.findEventsByParam(
@@ -99,20 +99,36 @@ public class EventPublicServiceImpl implements EventPublicService {
 
     private List<EventShortDto> sortEventList(
             List<EventShortDto> eventList,
-            EventKindSort sort,
+            EventSortKey sort,
             int from,
             int size) {
-        if (sort == EventKindSort.VIEWS) {
-            eventList = eventList.stream()
-                    .sorted(Comparator.comparing(EventShortDto::getViews).reversed())
-                    .skip(from)
-                    .limit(size)
-                    .collect(Collectors.toList());
-        } else {
-            eventList = eventList.stream()
-                    .skip(from)
-                    .limit(size)
-                    .collect(Collectors.toList());
+        switch (sort) {
+            case VIEWS:
+                eventList = eventList.stream()
+                        .sorted(Comparator.comparing(EventShortDto::getViews).reversed())
+                        .skip(from)
+                        .limit(size)
+                        .collect(Collectors.toList());
+                break;
+            case EVENT_RATING:
+                eventList = eventList.stream()
+                        .sorted(Comparator.comparing(EventShortDto::getEventRating).reversed())
+                        .skip(from)
+                        .limit(size)
+                        .collect(Collectors.toList());
+                break;
+            case EVENT_INITIATOR_RATING:
+                eventList = eventList.stream()
+                        .sorted(Comparator.comparing(EventShortDto::getEventInitiatorRating).reversed())
+                        .skip(from)
+                        .limit(size)
+                        .collect(Collectors.toList());
+                break;
+            default:
+                eventList = eventList.stream()
+                        .skip(from)
+                        .limit(size)
+                        .collect(Collectors.toList());
         }
 
         return eventList;

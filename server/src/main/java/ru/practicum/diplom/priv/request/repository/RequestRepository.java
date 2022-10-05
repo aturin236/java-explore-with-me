@@ -18,6 +18,8 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     Optional<Request> findByRequesterAndEvent(User user, Event event);
 
+    Optional<Request> findByRequesterAndEventAndStatus(User user, Event event, RequestStatus status);
+
     List<Request> findRequestsByRequester(User user);
 
     List<Request> findRequestsByEvent(Event event);

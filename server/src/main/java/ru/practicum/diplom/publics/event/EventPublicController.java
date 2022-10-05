@@ -26,7 +26,7 @@ public class EventPublicController {
             @RequestParam(required = false) String rangeStart,
             @RequestParam(required = false) String rangeEnd,
             @RequestParam(defaultValue = "false", required = false) Boolean onlyAvailable,
-            @RequestParam(defaultValue = "EVENT_DATE", required = false) EventKindSort sort,
+            @RequestParam(defaultValue = "EVENT_DATE", required = false) EventSortKey sort,
             @RequestParam(defaultValue = "0", required = false) int from,
             @RequestParam(defaultValue = "10", required = false) int size,
             HttpServletRequest request) {

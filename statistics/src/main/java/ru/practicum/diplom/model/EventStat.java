@@ -1,4 +1,4 @@
-package ru.practicum.diplom;
+package ru.practicum.diplom.model;
 
 import lombok.Data;
 

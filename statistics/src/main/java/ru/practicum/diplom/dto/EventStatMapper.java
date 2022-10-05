@@ -1,6 +1,6 @@
 package ru.practicum.diplom.dto;
 
-import ru.practicum.diplom.EventStat;
+import ru.practicum.diplom.model.EventStat;
 
 public class EventStatMapper {
     public static EventStat eventStatFromDto(EventStatDto eventStatDto) {

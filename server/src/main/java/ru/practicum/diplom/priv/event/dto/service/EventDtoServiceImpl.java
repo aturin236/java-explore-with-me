@@ -2,21 +2,18 @@ package ru.practicum.diplom.priv.event.dto.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
-import ru.practicum.diplom.exceptions.EventStatDtoInternalException;
 import ru.practicum.diplom.priv.event.dto.EventShortDto;
+import ru.practicum.diplom.priv.ratings.model.EventRating;
+import ru.practicum.diplom.priv.ratings.repository.EventRatingRepository;
 import ru.practicum.diplom.priv.request.RequestStatus;
 import ru.practicum.diplom.stat.StatClient;
 
-import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,21 +24,16 @@ import java.util.stream.Collectors;
 public class EventDtoServiceImpl implements EventDtoService {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final StatClient statClient;
+    private final EventRatingRepository eventRatingRepository;
 
     @Override
     public <T extends EventShortDto> T fillAdditionalInfo(T eventDto) {
         Map<Long, Integer> infos = getConfirmedRequestsInfo(List.of(eventDto.getId()));
-        Map<Long, Integer> views = getEventViews(List.of(eventDto.getId()));
+        Map<Long, Long> ratings = getEventRating(List.of(eventDto.getId()));
+        Map<Long, Long> initiatorRatings = getEventInitiatorRating(List.of(eventDto.getId()));
+        Map<Long, Long> views = statClient.getEventViews(List.of(eventDto.getId()));
 
-        eventDto.setConfirmedRequests(
-                infos.getOrDefault(eventDto.getId(), 0)
-        );
-
-        eventDto.setViews(
-                views.getOrDefault(eventDto.getId(), 0)
-        );
-
-        return eventDto;
+        return setEventFields(eventDto, infos, views, ratings, initiatorRatings);
     }
 
     @Override
@@ -50,16 +42,33 @@ public class EventDtoServiceImpl implements EventDtoService {
                 .map(EventShortDto::getId)
                 .collect(Collectors.toList());
         Map<Long, Integer> infos = getConfirmedRequestsInfo(ids);
-        Map<Long, Integer> views = getEventViews(ids);
+        Map<Long, Long> ratings = getEventRating(ids);
+        Map<Long, Long> initiatorRatings = getEventInitiatorRating(ids);
+        Map<Long, Long> views = statClient.getEventViews(ids);
 
-        for (T x : eventDto) {
-            x.setConfirmedRequests(
-                    infos.getOrDefault(x.getId(), 0)
-            );
-            x.setViews(
-                    views.getOrDefault(x.getId(), 0)
-            );
-        }
+        eventDto.forEach(x -> setEventFields(x, infos, views, ratings, initiatorRatings));
+
+        return eventDto;
+    }
+
+    private <T extends EventShortDto> T setEventFields(
+            T eventDto,
+            Map<Long, Integer> infos,
+            Map<Long, Long> views,
+            Map<Long, Long> ratings,
+            Map<Long, Long> initiatorRatings) {
+        eventDto.setConfirmedRequests(
+                infos.getOrDefault(eventDto.getId(), 0)
+        );
+        eventDto.setViews(
+                views.getOrDefault(eventDto.getId(), 0L)
+        );
+        eventDto.setEventRating(
+                ratings.getOrDefault(eventDto.getId(), 0L)
+        );
+        eventDto.setEventInitiatorRating(
+                initiatorRatings.getOrDefault(eventDto.getInitiator().getId(), 0L)
+        );
 
         return eventDto;
     }
@@ -75,11 +84,10 @@ public class EventDtoServiceImpl implements EventDtoService {
 
         List<ConfirmedRequestsInfo> infos = jdbcTemplate.query(sqlQuery, paramSource,
                 (rs, rowNum) -> makeConfirmedRequestsInfo(rs));
-        Map<Long, Integer> infosResult = new HashMap<>();
 
-        infos.forEach(x -> infosResult.put(x.getEventId(), x.getCountRequests()));
-
-        return infosResult;
+        return infos
+                .stream()
+                .collect(Collectors.toMap(ConfirmedRequestsInfo::getEventId, ConfirmedRequestsInfo::getCountRequests));
     }
 
     private ConfirmedRequestsInfo makeConfirmedRequestsInfo(ResultSet rs) throws SQLException {
@@ -90,34 +98,52 @@ public class EventDtoServiceImpl implements EventDtoService {
         return info;
     }
 
-    private Map<Long, Integer> getEventViews(List<Long> ids) {
-        String suffixUri = "/events/";
-        Object object;
-        try {
-            object = statClient.getStats(
-                    LocalDateTime.now().minusYears(1),
-                    LocalDateTime.now(),
-                    ids.stream()
-                            .map(x -> suffixUri + x)
-                            .collect(Collectors.toList()),
-                    true
-            );
-        } catch (UnsupportedEncodingException e) {
-            throw new EventStatDtoInternalException("Не удалось получить данные статистики");
+    private Map<Long, Long> getEventRating(List<Long> ids) {
+        List<EventRating> ratingsList = eventRatingRepository.findEventRatingsByEvents(ids);
+        Map<Long, Long> ratings = new HashMap<>();
+        ratingsList.forEach(x -> ratings.put(x.getEvent().getId(), x.getLikesCount() - x.getDislikesCount()));
+        return ratings;
+    }
+
+    private Map<Long, Long> getEventInitiatorRating(List<Long> ids) {
+        String sqlQuery = "SELECT ev.initiator as initiator, count(er.likes_count - er.dislikes_count) as rating\n" +
+                "from event_ratings er\n" +
+                "INNER join events ev ON er.event = ev.id\n" +
+                "Where er.event in (:ids)\n" +
+                "Group by ev.initiator";
+        MapSqlParameterSource paramSource = new MapSqlParameterSource();
+        paramSource.addValue("ids", ids);
+        List<InitiatorRating> ratingList = jdbcTemplate.query(sqlQuery, paramSource,
+                (rs, rowNum) -> makeInitiatorRating(rs));
+
+        Map<Long, Long> ratings = new HashMap<>();
+        ratingList.forEach(x -> ratings.put(x.getInitiatorId(), x.getRating()));
+
+        return ratings;
+    }
+
+    private InitiatorRating makeInitiatorRating(ResultSet rs) throws SQLException {
+        return new InitiatorRating(
+                rs.getLong("initiator"),
+                rs.getLong("rating")
+        );
+    }
+
+    static class InitiatorRating {
+        private final Long initiatorId;
+        private final Long rating;
+
+        public InitiatorRating(Long initiatorId, Long rating) {
+            this.initiatorId = initiatorId;
+            this.rating = rating;
         }
 
-        Map<Long, Integer> views = new HashMap<>();
-        try {
-            ResponseEntity<Object> response = (ResponseEntity<Object>) object;
-            List<LinkedHashMap<String, Object>> body = (List<LinkedHashMap<String, Object>>) response.getBody();
-            for (LinkedHashMap<String, Object> view : body) {
-                String idEventFromUri = ((String) view.get("uri")).replace(suffixUri, "");
-                views.put(Long.parseLong(idEventFromUri), (Integer) view.get("hits"));
-            }
-        } catch (Exception e) {
-            throw new EventStatDtoInternalException("Не удалось разобрать ответ сервиса статистики");
+        public Long getInitiatorId() {
+            return initiatorId;
         }
 
-        return views;
+        public Long getRating() {
+            return rating;
+        }
     }
 }
